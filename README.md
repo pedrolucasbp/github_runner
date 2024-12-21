@@ -1,6 +1,7 @@
-<h1 align="center">GitHub Actions self-hosted Runner Ansible role</h1>
+# GitHub Runner self-hosted Ansible role
 
-An Ansible role that installs and configures GitHub Actions self-hosted Runners
+An Ansible role that installs and configures GitHub Runner self-hosted
+
 inside one or multiple hosts, you can re-use it for many different URLs
 (repositories or organizations) inside the same host in order to re-use it as
 much as possible.
@@ -23,51 +24,52 @@ purposes and by the default value you can tell the type.
 Following values are required since there is no way to register the self-hosted
 Runner without them
 
-| Name                   | Description                                        |
-| ---------------------- | -------------------------------------------------- |
-| gh_runner_config_url   | GitHub Repository or Organization URL              |
-| gh_runner_config_token | GitHub Registration token to authenticate the host |
+
+| Name                       | Description                                        |
+| ---------------------------- | ---------------------------------------------------- |
+| github_runner_config_url   | GitHub Repository or Organization URL              |
+| github_runner_config_token | GitHub Registration token to authenticate the host |
 
 ## Example Playbook
 
 Simplest use case: Single repository configuration on one host.
 
 ```yaml
-- hosts: foo
+- hosts: 'github_runners'
   roles:
-    - role: macunha1.github_actions_runner
+    - role: macunha1.github_runner
       vars:
         gh_runner_config_labels:
           - linux
           - self-hosted
 
-        gh_runner_config_url: https://github.com/macunha1/ansible-github-actions-runner
-        gh_runner_config_token: AC5TNLJP9SBAFNEKKLLBLF264J8XO
+        github_runner_config_url: https://github.com/macunha1/ansible-github-actions-runner
+        github_runner_config_token: {{ github_runner_config_token_vault }}
 ```
 
 Complex use case to which this role was created for
 
 ```yaml
-- hosts: foo
+- hosts: 'github_runners'
   roles:
-    - role: macunha1.github_actions_runner
+    - role: macunha1.github_runner
       vars:
         gh_runner_config_labels:
           - linux
           - self-hosted
 
-        gh_runner_config_url: https://github.com/macunha1/ansible-github-actions-runner
-        gh_runner_config_token: AC5TNLJP9SBAFNEKKLLBLF264J8XO
+        github_runner_config_url: https://github.com/macunha1/ansible-github-actions-runner
+        github_runner_config_token: {{ github_runner_config_token_vault }}
 
-    - role: macunha1.github_actions_runner
+    - role: macunha1.github_runner
       vars:
-        gh_runner_config_url: https://github.com/macunha1/another-repository
-        gh_runner_config_token: AC5CQV3IJRR2OAFGEFCPJ0WJPJQXO
+        github_runner_config_url: https://github.com/macunha1/another-repository
+        github_runner_config_token: {{ github_runner_config_token_vault }}
 
-    - role: macunha1.github_actions_runner
+    - role: macunha1.github_runner
       vars:
-        gh_runner_config_url: https://github.com/macunha-acme-corp
-        gh_runner_config_token: ACYWUR9MHGR9U58C34W9ZK00UNBF
+        github_runner_config_url: https://github.com/macunha-acme-corp
+        github_runner_config_token: {{ github_runner_config_token_vault }}
 ```
 
 Note that despite using the same host, each one of these GitHub Actions Runner

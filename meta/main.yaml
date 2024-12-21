@@ -1,7 +1,7 @@
 ---
 galaxy_info:
   role_name: github_runner
-  author: Matheus Cunha
+  author: Matheus Cunha and Pedro Lucas
   description: >
     Idempotent Ansible role that installs and configures self-hosted GitHub
     Actions Runners (yeah, plural!)

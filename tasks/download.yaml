@@ -1,49 +1,49 @@
 ---
 - name: GitHub Actions Runner | Create workspace
   ansible.builtin.file:
-    path: "{{ gh_runner_workspace_path }}"
-    owner: "{{ gh_runner_service_user }}"
+    path: "{{ github_runner_workspace_path }}"
+    owner: "{{ github_runner_service_user }}"
     state: directory
     mode: 0755
   become: true
 
 - name: GitHub Actions Runner | Check if versions is already installed
   ansible.builtin.stat:
-    path: "{{ gh_runner_path }}"
+    path: "{{ github_runner_path }}"
   register: unarchived_package
 
 # Download the package only if it isn't found in the installed versions
 - name: GitHub Actions Runner | Download package if not already done
   when: not unarchived_package.stat.exists
   block:
-    - name: GitHub Actions Runner | Downloading package {{ gh_runner_version }}
+    - name: GitHub Actions Runner | Downloading package {{ github_runner_version }}
       ansible.builtin.get_url:
         # yamllint disable-line rule:line-length
-        url: "{{ gh_runner_download_base_url }}/v{{ gh_runner_version }}/actions-runner-{{ gh_runner_architecture }}-{{ gh_runner_version }}.tar.gz"
-        dest: "{{ tmp_download_path }}/actions-runner-{{ gh_runner_version }}.tar.gz"
+        url: "{{ github_runner_download_base_url }}/v{{ github_runner_version }}/actions-runner-{{ github_runner_architecture }}-{{ github_runner_version }}.tar.gz"
+        dest: "{{ github_runner_tmp_download_path }}/actions-runner-{{ github_runner_version }}.tar.gz"
         mode: 0400
         force: yes
       become: true
 
     - name: GitHub Actions Runner | Create installation directory
       ansible.builtin.file:
-        path: "{{ gh_runner_path }}"
+        path: "{{ github_runner_path }}"
         state: directory
         mode: 0755
       become: true
 
     - name: GitHub Actions Runner | Unarchive package
       ansible.builtin.unarchive:
-        src: "{{ tmp_download_path }}/actions-runner-{{ gh_runner_version }}.tar.gz"
-        dest: "{{ gh_runner_path }}"
+        src: "{{ github_runner_tmp_download_path }}/actions-runner-{{ github_runner_version }}.tar.gz"
+        dest: "{{ github_runner_path }}"
         remote_src: true
-      register: gh_runner_path_unarchived
+      register: github_runner_path_unarchived
       become: true
 
     - name: GitHub Actions Runner | Set permissions
       ansible.builtin.file:
-        path: "{{ gh_runner_path }}"
-        owner: "{{ gh_runner_service_user }}"
+        path: "{{ github_runner_path }}"
+        owner: "{{ github_runner_service_user }}"
         mode: 0755
         recurse: true
       become: true
@@ -52,7 +52,7 @@
     # enabled (default: true).
     - name: GitHub Actions Runner | Remove archived package
       ansible.builtin.file:
-        path: "{{ tmp_download_path }}/actions-runner-{{ gh_runner_version }}.tar.gz"
+        path: "{{ github_runner_tmp_download_path }}/actions-runner-{{ github_runner_version }}.tar.gz"
         state: absent
       become: true
       when: tmp_clear_download
